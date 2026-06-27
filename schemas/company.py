@@ -4,8 +4,8 @@ from .job import JobResponse
 
 class CompanyBase(BaseModel):
     name: str
-    email: str
-    phone: str
+    email:str
+    phone:str
 
 class CompanyCreate(CompanyBase):
     pass
@@ -17,7 +17,6 @@ class CompanyUpdate(BaseModel):
 
 class CompanyResponse(CompanyBase):
     id: int
-    jobs: list[JobResponse] = []
-
+    jobs: list[JobResponse]
     class Config:
         from_attributes = True

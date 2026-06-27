@@ -1,15 +1,20 @@
 from fastapi import APIRouter,HTTPException,Depends,status
 from schemas.company import CompanyCreate,CompanyUpdate,CompanyResponse 
-from models import company, job
+from models.company import Company
 from sqlalchemy.orm import session
-from ..database import get_db,SessionLocal
+from sqlalchemy.orm import relationship
+from database import get_db,SessionLocal
 
 router=APIRouter(prefix="/company", tags=["company"])
 company=[]
-@router.post("/",status_code=status.HTTP_201_CREATED)
-def create_company(company_create:CompanyCreate,db: session = Depends(get_db)):
-    pass
-    
+@router.post("/",status_code=status.HTTP_201_CREATED,response_model=CompanyResponse)
+def create_company(company_create:CompanyCreate,
+                   db: session = Depends(get_db)):
+    db_company=Company(**company_create.dict())
+    db.add(db_company)
+    db.commit()
+    db.refresh(db_company)
+    return db_company
 
 @router.get("/",status_code=status.HTTP_200_OK,response_model=list[CompanyResponse])
 def get_all_company(db: session = Depends(get_db)):
