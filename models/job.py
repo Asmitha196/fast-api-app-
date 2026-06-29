@@ -1,8 +1,10 @@
-from sqlalchemy import Column, Integer, String,Enum, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
-from database import Base,engine,SessionLocal
+from database import Base
 
+if False:
+    from .company import Company
 
 
 class Job(Base):
@@ -11,6 +13,6 @@ class Job(Base):
     title = Column(String, nullable=False)
     description = Column(String)
     salary = Column(Integer)
-    company_id = Column(Integer, ForeignKey("companies.id"))
-    
+    company_id = Column("comapny_id", Integer, ForeignKey("companies.id"))
+
     company = relationship("Company", back_populates="jobs")

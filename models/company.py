@@ -1,15 +1,17 @@
-from sqlalchemy import Column, Integer, String, Enum
-
-from database import Base,engine,SessionLocal
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
+from database import Base
+
+if False:
+    from .job import Job
 
 
 class Company(Base):
     __tablename__ = "companies"
-    id=Column(Integer, primary_key=True,index=True)
-    name=Column(String,nullable=False)
-    email=Column(String,unique=True)
-    phone=Column(String,unique=True)
-    jobs=relationship("Job",back_populates="company")
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    email = Column(String, unique=True)
+    phone = Column(String, unique=True)
+    jobs = relationship("Job", back_populates="company")
 
