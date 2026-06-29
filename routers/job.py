@@ -48,11 +48,11 @@ def update_job(job_id: int, job_update: JobUpdate, db: session = Depends(get_db)
     return db_job
 
 @router.delete("/{job_id}",status_code=status.HTTP_204_NO_CONTENT)
-def delete_job(job_id: int, db: session = Depends(get_db)):
-    db_job = db.query(Job).filter(Job.id == job_id).first()
-    if not db_job:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Job with id {job_id} not found")
-    db.delete(db_job)
+def delete_company(company_id: int,db: session = Depends(get_db)):
+    db_company = db.query(Company).filter(Company.id == company_id).first()
+    if not db_company:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Company with id {company_id} not found")
+    db.delete(db_company)
     db.commit()
 # @router.get("/")
 # def read_job():

@@ -2,9 +2,7 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
 from database import Base
-
-if False:
-    from .job import Job
+from .job import Job
 
 
 class Company(Base):
@@ -13,5 +11,6 @@ class Company(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True)
     phone = Column(String, unique=True)
+    location = Column(String)
     jobs = relationship("Job", back_populates="company")
 

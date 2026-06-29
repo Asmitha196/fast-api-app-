@@ -61,7 +61,7 @@
 -psycopg2 -- postgresql drivers
 -pydantic -- data validation 
 -typing-extensions -- type hints
-
+-alembic --database migration 
 ## concepts
 -ORM 
 -Object relational mapping --> to convert the python code to the sql code  without writting the sql commands 
