@@ -6,7 +6,7 @@ function JobCard() {
             <p>Banglore</p>
             <p>5 LPA</p>
         </div>
-    );
+    )
 }
 
 
