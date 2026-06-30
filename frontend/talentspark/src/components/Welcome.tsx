@@ -1,15 +1,18 @@
 import { useState } from "react";
 
-function Welcome() {
-    const [count, setCount] = useState(0);
-    const increment = () => setCount((prev) => prev + 1);
+function Counter() {
+  const [count, setCount] = useState(0);
 
-    return (
-        <section>
-            <h1>Count: {count}</h1>
-            <button onClick={increment}>Increment</button>
-        </section>
-    );
+  const increment = () => {
+    setCount(count + 1);
+  }
+
+  return (
+    <div>
+      <h1>Count: {count}</h1>
+      <button onClick={increment}>Increment</button>
+    </div>
+  )
 }
 
-export default Welcome;
+export default Counter;
