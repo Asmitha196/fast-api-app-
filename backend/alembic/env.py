@@ -18,7 +18,8 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 from database import Base
 from models.company import Company
-from models.job import Job   
+from models.job import Job
+from models.Users import Users   
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata

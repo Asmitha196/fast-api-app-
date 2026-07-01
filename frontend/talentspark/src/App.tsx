@@ -2,9 +2,9 @@
 import NavBar from "./components/NavBar";
 import CompanyCard from "./components/CompanyCard";
 import JobCard from "./components/JobCard";
-import Footer from "./components/footer";
+import Footer from "./components/Footer";
 import {useEffect,useState} from "react";
-import { getCompanies,updateCompany,deleteCompany,createCompany } from "./Services/CompanyServices";
+import { getCompanies,updateCompany,deleteCompany,createCompany } from "./Services/CompanyService";
 import type {Company} from "./types/company"
 
 function App(){
@@ -18,7 +18,7 @@ function App(){
       const companies = await getCompanies();
       setCompanies(companies);
     } catch (error) {
-      setError(error);
+      setError(error as Error);
     } finally {
       setLoading(false);
     }
@@ -29,7 +29,7 @@ function App(){
       const updatedCompany = await updateCompany(company.id,company);
       setCompanies(companies.map((company) => company.id === updatedCompany.id ? updatedCompany : company));
     }catch(error){
-      setError(error);
+      setError(error as Error);
     }
   }
 
@@ -38,7 +38,7 @@ function App(){
       await deleteCompany(id);
       setCompanies(companies.filter((company) => company.id !== id));
     }catch(error){
-      setError(error);
+      setError(error as Error);
     }
   }
 
@@ -47,7 +47,7 @@ function App(){
       const newCompany = await createCompany(company);
       setCompanies([...companies,newCompany]);
     }catch(error){
-      setError(error);
+      setError(error as Error);
     }
   }
 

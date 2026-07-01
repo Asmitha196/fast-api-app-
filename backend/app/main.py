@@ -1,12 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import Base, engine
+from models import job as job_model, company as company_model, Users as user_model
+from routers import company, job,auth
 
-# Import models before create_all()
-from models.company import Company
-from models.job import Job
-
-from routers import company, job
 
 app = FastAPI()
 app.add_middleware(
@@ -24,7 +21,7 @@ print(engine)
 
 app.include_router(company.router)
 app.include_router(job.router)
-
+app.include_router(auth.router)
 
 @app.get("/")
 def read_root():
