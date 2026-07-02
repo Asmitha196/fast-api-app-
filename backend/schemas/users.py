@@ -15,10 +15,14 @@ class UserLogin(BaseModel):
 
 
 class UserResponse(BaseModel):
-    id:int
-    name:str
-    email:str 
-    role:str  
+    id: int
+    name: str
+    email: str
+    role: str
 
     class Config:
-        from_attributes = True
+        orm_mode = True
+
+class UserUpdate(BaseModel):
+    id: int
+    name: str

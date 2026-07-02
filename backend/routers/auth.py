@@ -4,6 +4,8 @@ from models.Users import Users
 from schemas.users import UserCreate, UserLogin, UserResponse
 from database import get_db
 from utils.security import hash_password, verify_password
+from utils.token import create_access_token
+from schemas.tokens import Token
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -33,9 +35,14 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     return db_user
 
 
-@router.post("/login", response_model=UserResponse)
+from schemas.tokens import Token
+
+@router.post("/login", response_model=Token)
 def login_user(credentials: UserLogin, db: Session = Depends(get_db)):
     user = db.query(Users).filter(Users.email == credentials.email).first()
-    if not user or not verify_password(credentials.password, user.hashed_password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
-    return user
+    if not user:
+        raise HTTPException(status_code=400, detail="Invalid email or password")
+    if not verify_password(credentials.password, user.hashed_password):
+        raise HTTPException(status_code=400, detail="Invalid email or password")
+    access_token = create_access_token(data={"user_id": user.id, "role": user.role})
+    return {"access_token": access_token, "token_type": "bearer"}

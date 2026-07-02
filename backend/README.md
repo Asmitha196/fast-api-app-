@@ -100,3 +100,43 @@ useState -which is used to store the data in the component and which will update
 
 promise- handles asynchronous operations 
 asynchronous-handle concurrent requests 
+
+# hashing algorithm
+
+argon2
+bcrypt
+
+python-jose[cryptography] - used to create JWT tokens
+
+JWT Tokens
+- Used to authenticate and authorize users.
+- Format: xxxx.yyyy.zzzz (3 parts)
+
+1. Header
+   - Algorithm + Token Type
+   - Example:
+     {
+       alg: HS256,
+       typ: JWT
+     }
+
+2. Payload
+   - Contains data
+   - Example:
+     {
+       user_id: 1,
+       role: "admin"
+     }
+
+3. Signature
+   - Used to verify the token.
+   - Signature = hash(header + payload + secretKey)
+
+Access Token
+- Used to access protected resources.
+
+Refresh Token
+- Used to refresh the access token.
+
+Installation:
+pip install python-multipart
