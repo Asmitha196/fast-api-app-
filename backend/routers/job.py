@@ -4,13 +4,14 @@ from models.job import Job
 from models.company import Company
 from sqlalchemy.orm import session
 from database import get_db
+from utils.oauth2 import get_current_user, role_required
 
 router = APIRouter(prefix="/job", tags=["job"])
 
 job = []
 
 @router.post("/",status_code=status.HTTP_201_CREATED,response_model=JobResponse)
-def create_job(job_create: JobCreate, db: session = Depends(get_db)):
+def create_job(job_create: JobCreate, db: session = Depends(get_db), current_user=Depends(role_required(["admin"]))):
     company = db.query(Company).filter(Company.id == job_create.company_id).first()
     if not company:
         raise HTTPException(

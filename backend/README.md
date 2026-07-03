@@ -140,3 +140,36 @@ Refresh Token
 
 Installation:
 pip install python-multipart
+
+RBAC
+Role based access contrll
+used to give different permissions to different roles
+eg admin can do anything user can do only specific things
+use oauth2 module to implement RBAC
+get_current_user()-for authenticated user
+role_required-for role based acess controll
+create_access_token()-for creating access token with (secret_key ,algorith,payload )-token created then verify_access_token()-for decoding access token with (secret_key,algorithm,token)-token decoded then 
+
+Architecture
+backend/
+  app/
+   main.py
+   database.py
+   models/
+    users.py
+    company.py
+    job.py
+   schemaas
+    users.py
+    company.py
+    job.py
+  routers/
+  users.py
+  company.py
+  job.py
+ utils/
+  token.py
+  security.py
+  oauth2.py
+alembic.ini
+alembic/env.py
