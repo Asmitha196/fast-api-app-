@@ -1,18 +1,15 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class UserBase(BaseModel):
-    name:str
-    email:str
-    password:str
-    role:str
+    name: Optional[str] = None
+    email: str
+    password: str
+    role: str
+
 
 class UserCreate(UserBase):
     pass
-
-class UserLogin(BaseModel):
-    email: str
-    password: str
-
 
 class UserResponse(BaseModel):
     id: int
@@ -21,8 +18,8 @@ class UserResponse(BaseModel):
     role: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
-class UserUpdate(BaseModel):
-    id: int
-    name: str
+class Login_User(BaseModel):
+    email: str
+    password: str

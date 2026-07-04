@@ -173,3 +173,13 @@ backend/
   oauth2.py
 alembic.ini
 alembic/env.py
+SSE-Server sent events it is used to send the response from server client in the form of chunks of text so taht we can response in form of chumks of text like chatbot ui
+
+RAG retreival augmented generation
+it is used to incerese the accuracy of llm by providing relevant information to llm 
+
+context window -it is the amximum number of words that the llm can process at a time 
+
+langchain-its a framework to build llms it is use to connect llm to external sources of information like database,files,websites, it is used to create complex workflows of llm like cahtbot that can answer questions about specifuc documents
+
+llm-large language model 

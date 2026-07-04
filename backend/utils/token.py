@@ -6,7 +6,7 @@ from database import get_db
 from schemas.tokens import Token
 import os
 from dotenv import load_dotenv
-from models import Users
+from models.Users import Users
 
 
 load_dotenv()
