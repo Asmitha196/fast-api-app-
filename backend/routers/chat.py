@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from schemas.chat import ChatRequest
-from Services.langchain_services import ask_ai
+from Services.langchain_services import ask_ai_with_memory
 
 router = APIRouter(
     prefix="/chat",
@@ -10,7 +10,10 @@ router = APIRouter(
 @router.post("/")
 def chat(request: ChatRequest):
 
-    response = ask_ai(request.query)
+    response = ask_ai_with_memory(
+        request.query,
+        request.session_id
+    )
 
     return {
         "response": response

@@ -1,90 +1,61 @@
 import { useState } from "react";
-import { sendMessage } from "../Services/ChatServices";
+import { askCareerChat } from "../Services/ChatServices";
+import type { ChatMessage } from "../types/chat";
 
 function Chat() {
-  const [query, setQuery] = useState("");
-  const [messages, setMessages] = useState<
-    { sender: string; text: string }[]
-  >([]);
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [input, setInput] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [sessionId] = useState(() => "session_" + Date.now());
 
-  const handleSend = async () => {
-    if (!query.trim()) return;
+    const handleSend = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!input.trim()) return;
 
-    const userMessage = {
-      sender: "You",
-      text: query,
+        const userMessage: ChatMessage = { role: "user", content: input };
+        setMessages(prev => [...prev, userMessage]);
+        setInput("");
+        setLoading(true);
+
+        try {
+            const response = await askCareerChat(input, sessionId);
+            const botMessage: ChatMessage = { role: "bot", content: response };
+            setMessages(prev => [...prev, botMessage]);
+        } catch (error) {
+            console.error("Chat error:", error);
+            const errorMessage: ChatMessage = { role: "bot", content: "Error: Could not get response" };
+            setMessages(prev => [...prev, errorMessage]);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    setMessages((prev) => [...prev, userMessage]);
-
-    try {
-      const response = await sendMessage({
-        query,
-      });
-
-      const aiMessage = {
-        sender: "AI",
-        text: response.response,
-      };
-
-      setMessages((prev) => [...prev, aiMessage]);
-      setQuery("");
-    } catch (error) {
-      console.error(error);
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          sender: "AI",
-          text: "Something went wrong.",
-        },
-      ]);
-    }
-  };
-
-  return (
-    <div style={{ padding: "20px" }}>
-      <h1>TalentSpark Chat Assistant</h1>
-
-      <div
-        style={{
-          border: "1px solid #ccc",
-          height: "400px",
-          overflowY: "auto",
-          padding: "10px",
-          marginBottom: "10px",
-        }}
-      >
-        {messages.map((msg, index) => (
-          <div key={index}>
-            <strong>{msg.sender}: </strong>
-            {msg.text}
-          </div>
-        ))}
-      </div>
-
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Ask something..."
-        style={{
-          width: "80%",
-          padding: "10px",
-        }}
-      />
-
-      <button
-        onClick={handleSend}
-        style={{
-          marginLeft: "10px",
-          padding: "10px 20px",
-        }}
-      >
-        Send
-      </button>
-    </div>
-  );
+    return (
+        <div>
+            <h2>Career Chat</h2>
+            <div style={{ border: "1px solid #ccc", padding: "10px", height: "400px", overflowY: "scroll" }}>
+                {messages.length === 0 && <p>Ask me anything about your career!</p>}
+                {messages.map((msg, i) => (
+                    <div key={i} style={{ marginBottom: "10px" }}>
+                        <strong>{msg.role === "user" ? "You" : "Bot"}:</strong>
+                        <p>{msg.content}</p>
+                    </div>
+                ))}
+                {loading && <p><em>Thinking...</em></p>}
+            </div>
+            <form onSubmit={handleSend} style={{ marginTop: "10px" }}>
+                <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Type your message..."
+                    style={{ width: "80%" }}
+                    disabled={loading}
+                />
+                <button type="submit" disabled={loading}>Send</button>
+            </form>
+        </div>
+    );
 }
 
 export default Chat;
