@@ -183,3 +183,32 @@ context window -it is the amximum number of words that the llm can process at a 
 langchain-its a framework to build llms it is use to connect llm to external sources of information like database,files,websites, it is used to create complex workflows of llm like cahtbot that can answer questions about specifuc documents
 
 llm-large language model 
+
+how will it make chunks in vector db
+lets say we have 3 documnets -one each one has 100 words
+so it will make 3 chunks --each chunk will overlap with the previous chunk by 100 chars -so each chunk will have 500 chars
+like 0-499
+400-899
+800-1399
+
+this chunk will be converted into vectors
+eg: i am python developer i have 3 years of experuence in python development.i have good knowledge of python development and i am a good python developer .i have good knowledge of fastapi -will convert all 3 chunks into vectors 
+
+goldilocks principle -just rght amount of information
+semantic search - it is used to find the most relevant information to the query ->it is used to find the most relevant information to the query
+
+semantic similarty -it is used to find the most similar vectors 
+if two vectirs are close to each other  then they are similar 
+
+cosine similarity-used to store the vectors and do the dynamic search 
+
+qudrant is vector database
+it is used to store the vectors and do the semantic serach 
+
+embedding model-it is used to convert the text to vectors 
+
+intial with rag
+ user query->embedded done by embediing model->vector->semantic search done by quadrant (vector db)->retrieve relevant chunks->construct prompt->combined text +query ->llm->response
+ 
+without rag 
+ user query->send to llm->share transformers model will asnwer based on its training data ->response 
