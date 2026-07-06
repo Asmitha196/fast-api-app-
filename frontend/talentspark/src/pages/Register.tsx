@@ -23,19 +23,25 @@ function Register({onSwitchToLogin}: Props){
         }
     }   
     return(
-        <form onSubmit={handleSubmit}>
-            <h2>Register</h2>
-            <input type="text" value={name} onChange={(e)=>setName(e.target.value)} placeholder="Name" required/>
-            <br />
-            <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Email" required/>
-            <br />
-            <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Password" required/>
-            <br />
-            <input type="text" value={role} onChange={(e)=>setRole(e.target.value)} placeholder="Role" required/>
-            <br />
-            <button type="submit">Register</button>
-            <p>Already have an account? <button type="button" onClick={onSwitchToLogin}>Login</button></p>
-        </form>
+        <div className="auth-shell">
+            <form className="auth-card" onSubmit={handleSubmit}>
+                <div className="auth-brand">
+                    <div className="brand-mark">TS</div>
+                    <div>
+                        <h2>Create account</h2>
+                        <p>Join TalentSpark and get started</p>
+                    </div>
+                </div>
+                <input type="text" value={name} onChange={(e)=>setName(e.target.value)} placeholder="Name" required/>
+                <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Email" required/>
+                <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} placeholder="Password" required/>
+                <input type="text" value={role} onChange={(e)=>setRole(e.target.value)} placeholder="Role" required/>
+                <button className="auth-submit" type="submit">Register</button>
+                <p className="auth-switch">
+                    Already have an account? <button type="button" onClick={onSwitchToLogin}>Login</button>
+                </p>
+            </form>
+        </div>
     )
 }
 

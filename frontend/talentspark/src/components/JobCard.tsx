@@ -61,47 +61,71 @@ function JobCard({
         }
 
     return(
-        <div>
-            {jobs.map((job) => (
-                <div key={job.id}>
-                    {editJobId === job.id ? (
-                        <>
-                    <input type="text" value={editform.title} onChange={(e)=>setEditform({...editform,title:e.target.value})} placeholder="Title" />
-                    <input type="text" value={editform.description} onChange={(e)=>setEditform({...editform,description:e.target.value})} placeholder="Description" />
-                    <input type="text" value={editform.salary} onChange={(e)=>setEditform({...editform,salary:e.target.value})} placeholder="Salary" />
-                    <input type="number" value={editform.company_id} onChange={(e)=>setEditform({...editform,company_id:Number(e.target.value)})} placeholder="Company ID" />
-                    <button onClick={handleSave}>Save</button>
-                    <button onClick={handlecancel}>Cancel</button>
-                    </>
-                    ):
-                    <>
-                    <h1>{job.title}</h1>
-                    <p>Description: {job.description}</p>
-                    <p>Salary: {job.salary}</p>
-                    <p>Company: {companies.find(c => c.id === job.company_id)?.name || job.company_id}</p>
-                    <button
-                        onClick={() => {
-                            setEditJobId(job.id);
-                            setEditform({
-                                id: job.id,
-                                title: job.title,
-                                description: job.description,
-                                salary: job.salary,
-                                company_id: job.company_id,
-                            });
-                        }}
-                    >Edit</button>
-                    <button onClick={() => onDelete(job.id)}>Delete</button>
-                    </>}
-                    <hr></hr>
+        <div className="section-card">
+            <div className="section-header">
+                <div>
+                    <h2>Job Listings</h2>
+                    <p>Keep track of open roles and their associated companies.</p>
                 </div>
-            ))}
-            <h2>Add Job</h2>
-            <input type="text" value={addform.title} onChange={(e)=>setAddform({...addform,title:e.target.value})} placeholder="Title" />
-            <input type="text" value={addform.description} onChange={(e)=>setAddform({...addform,description:e.target.value})} placeholder="Description" />
-            <input type="text" value={addform.salary} onChange={(e)=>setAddform({...addform,salary:e.target.value})} placeholder="Salary" />
-            <input type="number" value={addform.company_id} onChange={(e)=>setAddform({...addform,company_id:Number(e.target.value)})} placeholder="Company ID" />
-            <button onClick={handleAdd}>Add</button>
+                <div className="section-pill">{jobs.length} jobs</div>
+            </div>
+
+            <div className="data-list">
+                {jobs.map((job) => (
+                    <div className="data-card" key={job.id}>
+                        {editJobId === job.id ? (
+                            <div className="form-card">
+                                <input type="text" value={editform.title} onChange={(e)=>setEditform({...editform,title:e.target.value})} placeholder="Title" />
+                                <input type="text" value={editform.description} onChange={(e)=>setEditform({...editform,description:e.target.value})} placeholder="Description" />
+                                <input type="text" value={editform.salary} onChange={(e)=>setEditform({...editform,salary:e.target.value})} placeholder="Salary" />
+                                <input type="number" value={editform.company_id} onChange={(e)=>setEditform({...editform,company_id:Number(e.target.value)})} placeholder="Company ID" />
+                                <div className="action-row">
+                                    <button className="action-btn primary" onClick={handleSave}>Save</button>
+                                    <button className="action-btn secondary" onClick={handlecancel}>Cancel</button>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="data-top">
+                                    <div>
+                                        <h3>{job.title}</h3>
+                                        <p className="data-subtitle">{companies.find(c => c.id === job.company_id)?.name || job.company_id}</p>
+                                    </div>
+                                    <div className="section-pill soft">{job.salary}</div>
+                                </div>
+                                <div className="data-meta">
+                                    <p><strong>Description:</strong> {job.description}</p>
+                                </div>
+                                <div className="action-row">
+                                    <button
+                                        className="action-btn secondary"
+                                        onClick={() => {
+                                            setEditJobId(job.id);
+                                            setEditform({
+                                                id: job.id,
+                                                title: job.title,
+                                                description: job.description,
+                                                salary: job.salary,
+                                                company_id: job.company_id,
+                                            });
+                                        }}
+                                    >Edit</button>
+                                    <button className="action-btn danger" onClick={() => onDelete(job.id)}>Delete</button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                ))}
+            </div>
+
+            <div className="form-card">
+                <h3>Add Job</h3>
+                <input type="text" value={addform.title} onChange={(e)=>setAddform({...addform,title:e.target.value})} placeholder="Title" />
+                <input type="text" value={addform.description} onChange={(e)=>setAddform({...addform,description:e.target.value})} placeholder="Description" />
+                <input type="text" value={addform.salary} onChange={(e)=>setAddform({...addform,salary:e.target.value})} placeholder="Salary" />
+                <input type="number" value={addform.company_id} onChange={(e)=>setAddform({...addform,company_id:Number(e.target.value)})} placeholder="Company ID" />
+                <button className="action-btn primary" onClick={handleAdd}>Add Job</button>
+            </div>
         </div>
     )
 }

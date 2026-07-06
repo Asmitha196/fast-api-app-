@@ -31,29 +31,69 @@ function Chat() {
     };
 
     return (
-        <div>
-            <h2>Career Chat</h2>
-            <div style={{ border: "1px solid #ccc", padding: "10px", height: "400px", overflowY: "scroll" }}>
-                {messages.length === 0 && <p>Ask me anything about your career!</p>}
-                {messages.map((msg, i) => (
-                    <div key={i} style={{ marginBottom: "10px" }}>
-                        <strong>{msg.role === "user" ? "You" : "Bot"}:</strong>
-                        <p>{msg.content}</p>
+        <div className="chat-layout">
+            <aside className="chat-sidebar">
+                <div className="chat-sidebar-header">
+                    <p className="eyebrow">Active chats</p>
+                    <h3>Career Support</h3>
+                </div>
+                <div className="chat-user-card active">
+                    <strong>Career Coach</strong>
+                    <span>Online</span>
+                </div>
+                <div className="chat-user-card">
+                    <strong>Resume Review</strong>
+                    <span>Available</span>
+                </div>
+                <div className="chat-user-card">
+                    <strong>Interview Prep</strong>
+                    <span>Pending</span>
+                </div>
+            </aside>
+
+            <section className="chat-panel">
+                <div className="chat-panel-header">
+                    <div>
+                        <p className="eyebrow">AI Career Assistant</p>
+                        <h2>Career Chat</h2>
                     </div>
-                ))}
-                {loading && <p><em>Thinking...</em></p>}
-            </div>
-            <form onSubmit={handleSend} style={{ marginTop: "10px" }}>
-                <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Type your message..."
-                    style={{ width: "80%" }}
-                    disabled={loading}
-                />
-                <button type="submit" disabled={loading}>Send</button>
-            </form>
+                    <div className="chat-status">Online</div>
+                </div>
+
+                <div className="chat-messages-panel">
+                    {messages.length === 0 && (
+                        <div className="chat-empty-state">
+                            <h3>Ask anything about your career journey</h3>
+                            <p>Get career guidance, resume feedback, and job-search suggestions in real time.</p>
+                        </div>
+                    )}
+
+                    {messages.map((msg, i) => (
+                        <div key={i} className={`chat-bubble ${msg.role === "user" ? "user" : "bot"}`}>
+                            <strong>{msg.role === "user" ? "You" : "Assistant"}</strong>
+                            <p>{msg.content}</p>
+                        </div>
+                    ))}
+
+                    {loading && (
+                        <div className="chat-bubble bot typing">
+                            <strong>Assistant</strong>
+                            <p>Thinking...</p>
+                        </div>
+                    )}
+                </div>
+
+                <form className="chat-input-panel" onSubmit={handleSend}>
+                    <input
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder="Type your message..."
+                        disabled={loading}
+                    />
+                    <button type="submit" disabled={loading}>Send</button>
+                </form>
+            </section>
         </div>
     );
 }

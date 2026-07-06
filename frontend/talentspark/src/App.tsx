@@ -117,13 +117,13 @@ function App() {
 
   if (!token) {
     return (
-      <>
+      <div className="page-shell page-auth">
         {page === "login" ? (
           <Login onLogin={handleLogin} onSwitchToRegister={() => setPage("register")} />
         ) : (
           <Register onSwitchToLogin={() => setPage("login")} />
         )}
-      </>
+      </div>
     )
   }
 
@@ -135,30 +135,51 @@ function App() {
     return <div>Error: {error.message}</div>
   }
   return (
-    <>
-      <NavBar currentPage={currentPage} onNavigate={setCurrentPage} />
-      <br />
-      {currentPage === "home" && (
-        <>
-          <CompanyCard
-            companies={companies}
-            jobs={jobs}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onAdd={handleAdd}
-          />
-          <JobCard
-            jobs={jobs}
-            companies={companies}
-            onEdit={handleJobEdit}
-            onDelete={handleJobDelete}
-            onAdd={handleJobAdd}
-          />
-        </>
-      )}
-      {currentPage === "chat" && <Chat />}
-      <Footer />
-    </>
+    <div className="page-shell page-dashboard">
+      <div className="dashboard-shell">
+        <aside className="sidebar-panel">
+          <div className="brand-block">
+            <div className="brand-mark">TS</div>
+            <div>
+              <h3>TalentSpark</h3>
+              <p>Career platform</p>
+            </div>
+          </div>
+          <NavBar currentPage={currentPage} onNavigate={setCurrentPage} />
+        </aside>
+
+        <main className="dashboard-main">
+          <header className="dashboard-header">
+            <div>
+              <p className="eyebrow">Operations Hub</p>
+              <h1>{currentPage === "chat" ? "AI Career Assistant" : "Welcome back"}</h1>
+            </div>
+            <div className="header-pill">{currentPage === "chat" ? "Live Chat" : "Dashboard"}</div>
+          </header>
+
+          {currentPage === "home" && (
+            <div className="dashboard-grid">
+              <CompanyCard
+                companies={companies}
+                jobs={jobs}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onAdd={handleAdd}
+              />
+              <JobCard
+                jobs={jobs}
+                companies={companies}
+                onEdit={handleJobEdit}
+                onDelete={handleJobDelete}
+                onAdd={handleJobAdd}
+              />
+            </div>
+          )}
+          {currentPage === "chat" && <Chat />}
+          <Footer />
+        </main>
+      </div>
+    </div>
   )
 }
 
