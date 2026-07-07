@@ -6,7 +6,7 @@ class ResumeRequest(BaseModel):
     resume_text: str
 
 
-class ResumeResponse(BaseModel)
+class ResumeResponse(BaseModel):
     analysis: str
 
 

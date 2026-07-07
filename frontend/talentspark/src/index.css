@@ -653,6 +653,51 @@ button {
   font-weight: 600;
 }
 
+/* RAG UI */
+.rag-stack {
+  display: grid;
+  gap: 14px;
+  padding: 0 18px 18px;
+}
+
+.rag-card {
+  padding: 18px;
+}
+
+.rag-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.rag-form-stack {
+  display: grid;
+}
+
+.rag-form input,
+.rag-form textarea {
+  flex: 1;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: white;
+}
+
+.rag-form textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.rag-response {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
 /* Footer */
 footer {
   text-align: center;
