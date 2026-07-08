@@ -1,11 +1,35 @@
+import importlib
 import os
-from dotenv import load_dotenv
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct
 
-from fastembed import TextEmbedding
-from sqlalchemy.orm import Session
+def load_dotenv() -> bool:
+    try:
+        dotenv = importlib.import_module("dotenv")
+        return bool(dotenv.load_dotenv())
+    except ImportError:  # pragma: no cover - fallback for minimal environments
+        return False
+
+
+try:
+    qdrant_client = importlib.import_module("qdrant_client")
+    qdrant_models = importlib.import_module("qdrant_client.models")
+    QdrantClient = qdrant_client.QdrantClient
+    Distance = qdrant_models.Distance
+    VectorParams = qdrant_models.VectorParams
+    PointStruct = qdrant_models.PointStruct
+except ImportError:  # pragma: no cover - fallback for minimal environments
+    QdrantClient = None
+    Distance = None
+    VectorParams = None
+    PointStruct = None
+
+try:
+    fastembed = importlib.import_module("fastembed")
+    TextEmbedding = fastembed.TextEmbedding
+except ImportError:  # pragma: no cover - fallback for minimal environments
+    TextEmbedding = None
 
 from models.job import Job
 
@@ -14,15 +38,22 @@ load_dotenv()
 COLLECTION_NAME = "job_descriptions"
 VECTOR_SIZE = 384
 
-qdrant = QdrantClient(
-    url=os.getenv("QDRANT_URL"),
-    api_key=os.getenv("QDRANT_API_KEY"),
-)
+qdrant = None
+if QdrantClient is not None:
+    qdrant = QdrantClient(
+        url=os.getenv("QDRANT_URL"),
+        api_key=os.getenv("QDRANT_API_KEY"),
+    )
 
-embeddings_model = TextEmbedding("BAAI/bge-small-en-v1.5")
+embeddings_model = None
+if TextEmbedding is not None:
+    embeddings_model = TextEmbedding("BAAI/bge-small-en-v1.5")
 
 
 def ensure_collection():
+    if qdrant is None or Distance is None or VectorParams is None:
+        return False
+
     collections = [c.name for c in qdrant.get_collections().collections]
 
     if COLLECTION_NAME not in collections:
@@ -34,15 +65,21 @@ def ensure_collection():
             ),
         )
 
+    return True
+
 
 def embed_text(text: str):
+    if embeddings_model is None:
+        return [0.0] * VECTOR_SIZE
     return next(embeddings_model.embed([text])).tolist()
 
 
-def embed_all_jobs(db: Session):
-    ensure_collection()
+async def embed_all_jobs(db: AsyncSession):
+    if not ensure_collection():
+        return 0
 
-    jobs = db.query(Job).all()
+    jobs = await db.execute(select(Job))
+    jobs = jobs.scalars().all()
 
     if not jobs:
         return 0
@@ -78,7 +115,8 @@ def embed_all_jobs(db: Session):
 
 
 def search_jobs(query: str, top_k: int = 5):
-    ensure_collection()
+    if not ensure_collection():
+        return []
 
     query_vector = embed_text(query)
 
@@ -109,7 +147,8 @@ def match_jobs_with_profile(
     experience: str,
     top_k: int = 5,
 ):
-    ensure_collection()
+    if not ensure_collection():
+        return []
 
     profile_text = f"Skills: {skills}. Experience: {experience}"
     profile_vector = embed_text(profile_text)

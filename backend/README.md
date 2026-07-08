@@ -212,3 +212,20 @@ intial with rag
  
 without rag 
  user query->send to llm->share transformers model will asnwer based on its training data ->response 
+
+
+ # Before deployement checklist 
+ .env configured 
+ on startup created all tables in db
+ async await in every api and function and sessions 
+ exception handling for all apis->
+ eg:
+ 1.resource not found
+ 2.internal server error
+ 3.bad request
+ 4.unauthorized
+ 5.forbidden
+ 6.validation error
+ 7.email already users 
+ 8.password incorrect 
+ 9.company not found 

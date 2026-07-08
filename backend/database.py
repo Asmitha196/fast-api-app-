@@ -1,22 +1,52 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+import importlib
+import os
 
-SQLALCHEMY_DATABASE_URL = "postgresql+psycopg2://postgres:Sushan%40123@localhost:5432/postgres"
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+def load_dotenv() -> bool:
+    try:
+        dotenv = importlib.import_module("dotenv")
+        return bool(dotenv.load_dotenv())
+    except ImportError:  # pragma: no cover - fallback for minimal environments
+        return False
 
-SessionLocal = sessionmaker(
-    autocommit=False,
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
+from sqlalchemy.orm import declarative_base
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+# Fix old postgres:// URLs
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace(
+        "postgres://",
+        "postgresql+asyncpg://",
+        1,
+    )
+
+engine = create_async_engine(
+    DATABASE_URL,
+    echo=False,
+)
+
+SessionLocal = async_sessionmaker(
+    bind=engine,
+    class_=AsyncSession,
     autoflush=False,
-    bind=engine
+    autocommit=False,
+    expire_on_commit=False,
 )
 
 Base = declarative_base()
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+async def get_db():
+    async with SessionLocal() as db:
+        try:
+            yield db
+        finally:
+            await db.close()
