@@ -7,6 +7,8 @@ from sqlalchemy.orm import selectinload
 from database import get_db
 from utils.oauth2 import get_current_user, role_required
 
+from sqlalchemy.orm.attributes import set_committed_value
+
 router = APIRouter(prefix="/company", tags=["company"])
 company = []
 
@@ -16,7 +18,7 @@ async def create_company(company_create: CompanyCreate, db: AsyncSession = Depen
         db_company = Company(**company_create.dict())
         db.add(db_company)
         await db.commit()
-        await db.refresh(db_company)
+        set_committed_value(db_company, 'jobs', [])
         return db_company
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Database error creating company: {str(e)}")
@@ -32,7 +34,7 @@ async def get_all_company(db: AsyncSession = Depends(get_db)):
 
 @router.get("/{company_id}", status_code=status.HTTP_200_OK, response_model=CompanyResponse)
 async def get_company(company_id: int, db: AsyncSession = Depends(get_db), current_user = Depends(get_current_user)):
-    result = await db.execute(select(Company).filter(Company.id == company_id))
+    result = await db.execute(select(Company).options(selectinload(Company.jobs)).filter(Company.id == company_id))
     company = result.scalar_one_or_none()
     if not company:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Company with id {company_id} not found")
@@ -47,7 +49,8 @@ async def update_company(company_id: int, company_update: CompanyUpdate, db: Asy
     for key, value in company_update.dict().items():
         setattr(db_company, key, value) #auto changes value in api by setattr function
     await db.commit()
-    await db.refresh(db_company) #it makes a new object with updated values and returns it to the user
+    result = await db.execute(select(Company).options(selectinload(Company.jobs)).filter(Company.id == company_id))
+    db_company = result.scalar_one()
     return db_company
 
 @router.delete("/{company_id}",status_code=status.HTTP_204_NO_CONTENT)

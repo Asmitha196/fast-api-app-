@@ -2,6 +2,7 @@ import importlib
 import os
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 
 def load_dotenv() -> bool:
@@ -78,7 +79,7 @@ async def embed_all_jobs(db: AsyncSession):
     if not ensure_collection():
         return 0
 
-    jobs = await db.execute(select(Job))
+    jobs = await db.execute(select(Job).options(selectinload(Job.company)))
     jobs = jobs.scalars().all()
 
     if not jobs:

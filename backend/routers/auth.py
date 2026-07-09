@@ -17,10 +17,11 @@ async def register_user(user: UserCreate, db: AsyncSession = Depends(get_db)):
         # Check if the user already exists
         result = await db.execute(select(Users).filter(Users.email == user.email))
         existing_user = result.scalars().first()
-        if existing_user:
-            raise HTTPException(status_code=400, detail="Email already registered")
     except Exception as e:
         raise HTTPException(status_code=500, detail="An error occurred while registering the user")
+
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
 
     # Hash the password
     hashed_password = hash_password(user.password)
@@ -52,12 +53,13 @@ async def login(
     try:
         result = await db.execute(select(Users).filter(Users.email == username))
         existing_user = result.scalars().first()
-        if not existing_user:
-            raise HTTPException(status_code=404, detail="User not found")
-        if not verify_password(password, existing_user.hashed_password):
-            raise HTTPException(status_code=400, detail="Incorrect password")
-        access_token = create_access_token(data={"user_id": existing_user.id, "role": existing_user.role})
-        return {"access_token": access_token, "token_type": "bearer"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail="An error occurred while logging in")                                                                                                                                               
+        raise HTTPException(status_code=500, detail="An error occurred while logging in")
+
+    if not existing_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if not verify_password(password, existing_user.hashed_password):
+        raise HTTPException(status_code=400, detail="Incorrect password")
+    access_token = create_access_token(data={"user_id": existing_user.id, "role": existing_user.role})
+    return {"access_token": access_token, "token_type": "bearer"}                                                                                                                                               
     

@@ -22,14 +22,13 @@ def create_access_token(data: dict, expires_delta: timedelta = timedelta(hours=2
     return encoded_jwt
 
 
-def verify_access_token(token: str, db: Session = Depends(get_db)):
+def verify_access_token(token: str):
     try:
         to_decode = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        if "user_id" in to_decode and "sub" not in to_decode:
+            to_decode["sub"] = to_decode["user_id"]
+        return to_decode
     except Exception:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")
 
-    current_user = db.query(Users).filter(Users.id == to_decode.get("user_id")).first()
-    if current_user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authentication credentials")
-    return current_user
 
