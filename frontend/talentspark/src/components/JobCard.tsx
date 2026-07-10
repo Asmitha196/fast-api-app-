@@ -1,7 +1,7 @@
 import type {Job} from "../types/job";
 import type {Company} from "../types/company";
 
-import {useState} from "react";
+import {useState, useEffect} from "react";
 
 type Props = {
     jobs:Job[];
@@ -18,24 +18,33 @@ function JobCard({
             id:0,
             title:"",
             description:"",
-            salary:"",
+            salary:0,
             company_id:0
         });
         const [editform,setEditform] = useState<Job>({
             id:0,
             title:"",
             description:"",
-            salary:"",
+            salary:0,
             company_id:0
         });
-        const handleAdd = () => {
-            onAdd(addform);
+
+        useEffect(() => {
+            if (companies.length > 0 && addform.company_id === 0) {
+                setAddform(prev => ({ ...prev, company_id: companies[0].id }));
+            }
+        }, [companies]);
+        const handleAdd = async () => {
+            if (!addform.title || addform.salary <= 0 || addform.company_id <= 0) {
+                return;
+            }
+            await onAdd(addform);
             setAddform({
                 id:0,
                 title:"",
                 description:"",
-                salary:"",
-                company_id:0
+                salary:0,
+                company_id: companies.length > 0 ? companies[0].id : 0
             })
         }
         const handleSave = () => {
@@ -45,7 +54,7 @@ function JobCard({
                 id:0,
                 title:"",
                 description:"",
-                salary:"",
+                salary:0,
                 company_id:0
             })
         }
@@ -55,10 +64,19 @@ function JobCard({
                 id:0,
                 title:"",
                 description:"",
-                salary:"",
+                salary:0,
                 company_id:0
             })
         }
+
+        const canAddJob = Boolean(addform.title.trim() && addform.salary > 0 && addform.company_id > 0);
+        const addJobValidationMessage = !addform.title.trim()
+            ? "Title is required."
+            : addform.salary <= 0
+                ? "Salary must be greater than 0."
+                : addform.company_id <= 0
+                    ? "Select a company."
+                    : "";
 
     return(
         <div className="section-card">
@@ -77,8 +95,13 @@ function JobCard({
                             <div className="form-card">
                                 <input type="text" value={editform.title} onChange={(e)=>setEditform({...editform,title:e.target.value})} placeholder="Title" />
                                 <input type="text" value={editform.description} onChange={(e)=>setEditform({...editform,description:e.target.value})} placeholder="Description" />
-                                <input type="text" value={editform.salary} onChange={(e)=>setEditform({...editform,salary:e.target.value})} placeholder="Salary" />
-                                <input type="number" value={editform.company_id} onChange={(e)=>setEditform({...editform,company_id:Number(e.target.value)})} placeholder="Company ID" />
+                                <input type="number" min={0} value={editform.salary} onChange={(e)=>setEditform({...editform,salary:Number(e.target.value)})} placeholder="Salary" />
+                                <select value={editform.company_id} onChange={(e)=>setEditform({...editform,company_id:Number(e.target.value)})}>
+                                    <option value={0} disabled>Select company</option>
+                                    {companies.map(company => (
+                                        <option key={company.id} value={company.id}>{company.name}</option>
+                                    ))}
+                                </select>
                                 <div className="action-row">
                                     <button className="action-btn primary" onClick={handleSave}>Save</button>
                                     <button className="action-btn secondary" onClick={handlecancel}>Cancel</button>
@@ -122,9 +145,21 @@ function JobCard({
                 <h3>Add Job</h3>
                 <input type="text" value={addform.title} onChange={(e)=>setAddform({...addform,title:e.target.value})} placeholder="Title" />
                 <input type="text" value={addform.description} onChange={(e)=>setAddform({...addform,description:e.target.value})} placeholder="Description" />
-                <input type="text" value={addform.salary} onChange={(e)=>setAddform({...addform,salary:e.target.value})} placeholder="Salary" />
-                <input type="number" value={addform.company_id} onChange={(e)=>setAddform({...addform,company_id:Number(e.target.value)})} placeholder="Company ID" />
-                <button className="action-btn primary" onClick={handleAdd}>Add Job</button>
+                <input type="number" min={0} value={addform.salary} onChange={(e)=>setAddform({...addform,salary:Number(e.target.value)})} placeholder="Salary" />
+                <select value={addform.company_id} onChange={(e)=>setAddform({...addform,company_id:Number(e.target.value)})}>
+                    <option value={0} disabled>{companies.length ? "Select company" : "No companies available"}</option>
+                    {companies.map(company => (
+                        <option key={company.id} value={company.id}>{company.name}</option>
+                    ))}
+                </select>
+                <button
+                    className="action-btn primary"
+                    onClick={handleAdd}
+                    disabled={!canAddJob}
+                >Add Job</button>
+                {addJobValidationMessage && (
+                    <p className="validation-message">{addJobValidationMessage}</p>
+                )}
             </div>
         </div>
     )
